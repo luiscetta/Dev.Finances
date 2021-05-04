@@ -1,44 +1,36 @@
 const Modal = {
     open() {
-        // Abrir modal
-        // Adicionar a class active ao modal 
+        // Open modal
+        // Add class active to modal 
         document
             .querySelector('.modal-overlay')
             .classList.add('active')
     },
     close() {
-        // Fechar modal
-        // Remover a class active ao modal 
+        // Close modal
+        // Remover class active of modal 
         document
             .querySelector('.modal-overlay')
             .classList.remove('active')
     }
 }
 
-const Transaction = {
-    all: [
+const Storage = {
+    get() {
 
-        {
-            description: 'Luz',
-            amount: -50000,
-            date: '23/01/2021',
-        },
-        {
-            description: 'Website',
-            amount: 500000,
-            date: '23/01/2021',
-        },
-        {
-            description: 'Internet',
-            amount: -20000,
-            date: '23/01/2021',
-        },
-        {
-            description: 'Kit de Peles de Bateria',
-            amount: -35000,
-            date: '23/01/2021',
-        }
-    ],
+        // transform string to array or object
+        return JSON.parse(localStorage.getItem("dev.finances:transactions")) || []
+    },
+    set(transactions) {
+        localStorage.setItem("dev.finances:transaction", 
+
+        // transform array to string
+        JSON.stringify(transactions))
+    }
+}
+
+const Transaction = {
+    all: Storage.get(),
 
     // add new transactions
     add(transaction) {
@@ -95,12 +87,13 @@ const DOM = {
 
     addTransaction(transaction, index) {
         const tr = document.createElement('tr')
-        tr.innerHTML = DOM.innerHTMLTransaction(transaction)
+        tr.innerHTML = DOM.innerHTMLTransaction(transaction, index)
+        tr.dataset.index = index
 
         DOM.transactionsContainer.appendChild(tr)
     },
 
-    innerHTMLTransaction(transaction) {
+    innerHTMLTransaction(transaction, index) {
         const CSSclass = transaction.amount > 0 ? "income" : "expense"
 
 
@@ -111,7 +104,7 @@ const DOM = {
                 <td class="${CSSclass}">${amount}</td>
                 <td class="date">${transaction.date}</td>
                 <td>
-                <img src="./assets/minus.svg" alt="Remover Transação">
+                <img onclick="Transaction.remove(${index})" src="./assets/minus.svg" alt="Remover Transação">
                 </td>
         `
         return html
@@ -140,7 +133,7 @@ const DOM = {
 // Formatação da moeda
 const Utils = {
     formatAmount(value) {
-        value = Number(value) * 100
+        value = Number(value.replace(/\,\./g, "")) * 100
 
         return value
     },
@@ -229,26 +222,28 @@ const Form = {
             Form.clearFields()
 
             // closing modal 
-            // refreshing application 
+            Modal.close()
 
         } catch (error) {
             alert(error.message);
         }
 
-
     }
 }
+
 
 // reload dos códigos
 const App = {
     init() {
 
         // Imprimindo a tabela na tela
-        Transaction.all.forEach(transaction => {
-            DOM.addTransaction(transaction)
-        });
+        Transaction.all.forEach(DOM.addTransaction);
 
+        // Atualizando cards
         DOM.updateBalance();
+
+        // Atualizando Local Storage
+        Storage.set(Transaction.all)
     },
 
     reload() {
