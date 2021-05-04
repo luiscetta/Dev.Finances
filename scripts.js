@@ -48,7 +48,7 @@ const Transaction = {
 
 
     incomes() {
-        // Pegar todas as transações, verificar se é maior que zero. Para cada transação, se for maior que zero, somar a uma variável e retornar a variável.
+        // Take all transactions, check if it is greater than zero. For each transaction, if it is greater than zero, add to a variable and return the variable.
 
         let income = 0;
 
@@ -61,7 +61,7 @@ const Transaction = {
         return income
     },
     expenses() {
-        // somar as saídas
+        // sum expenses
 
         let expense = 0;
 
@@ -74,13 +74,13 @@ const Transaction = {
         return expense
     },
     total() {
-        // somar entradas - saídas
+        // sum incomes - expenses
 
         return Transaction.incomes() + Transaction.expenses();
     }
 }
 
-// Substituindo a tabela de entradas e saídas do HTML com o JS
+// Replacing the HTML input and output table with JS
 const DOM = {
 
     transactionsContainer: document.querySelector('#data-table tbody'),
@@ -112,11 +112,11 @@ const DOM = {
 
     updateBalance() {
 
-        // Soma das Entradas
+        // Incomes Sum
         document.getElementById('incomeDisplay')
             .innerHTML = Utils.formatCurrency(Transaction.incomes())
 
-        // Soma das Saídas
+        // Expenses Sum
         document.getElementById('expenseDisplay')
             .innerHTML = Utils.formatCurrency(Transaction.expenses())
 
@@ -130,7 +130,7 @@ const DOM = {
     }
 }
 
-// Formatação da moeda
+// Currency formatting
 const Utils = {
     formatAmount(value) {
         value = Number(value.replace(/\,\./g, "")) * 100
@@ -147,7 +147,7 @@ const Utils = {
     formatCurrency(value) {
         const signal = Number(value) < 0 ? "-" : ""
 
-        // REGEX para colocar o R$
+        // REGEX to put R$
         value = String(value).replace(/\D/g, "")
 
         value = Number(value) / 100
@@ -232,17 +232,17 @@ const Form = {
 }
 
 
-// reload dos códigos
+// init/reload of codes
 const App = {
     init() {
 
-        // Imprimindo a tabela na tela
+        // Printing the table on the screen
         Transaction.all.forEach(DOM.addTransaction);
 
-        // Atualizando cards
+        // Updating cards
         DOM.updateBalance();
 
-        // Atualizando Local Storage
+        // Updating Local Storage
         Storage.set(Transaction.all)
     },
 
